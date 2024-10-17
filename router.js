@@ -3,6 +3,7 @@ export const API_EndPoint = function (HttpContext) {
         if (!HttpContext.path.isAPI) {
             resolve(false);
         } else {
+            
             let controllerName = HttpContext.path.controllerName;
             if (controllerName != undefined) {
                 try {
