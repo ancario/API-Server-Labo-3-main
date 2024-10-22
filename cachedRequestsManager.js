@@ -33,7 +33,7 @@ export default class cachedRequestsManager {
     // Trouve la cache associée à une URL et renvoie les données si trouvées
     static find(url) {
         for (let cache of global.repositoryCaches) {
-            if (cache.url === url) {
+            if (cache.url === url ) {
                 // Met à jour le temps d'expiration pour prolonger la durée de vie de la cache
                 cache.Expire_Time = utilities.nowInSeconds() + repositoryCachesExpirationTime;
                 console.log(`[Cache hit: URL - ${url}]`);
@@ -64,11 +64,16 @@ export default class cachedRequestsManager {
     // Gère la réponse à une requête HTTP en fonction du cache
     static get(HttpContext) {
         let cached = cachedRequestsManager.find(HttpContext.req.url);
+        
         if (cached) {
-            HttpContext.response.JSON(cached.content, cached.ETag, true); // true signifie "from cache"
+            if(cached.ETag == HttpContext.req.headers["etag"]){
+           HttpContext.response.JSON(cached.content, cached.ETag, true); // true signifie "from cache"
 
             console.log(`[Response sent from cache: URL - ${HttpContext.req.url}]`);
+            console.log(`AAAAAAAAAAAAAAAAAAAAAAAAAAA`);
             return true;
+            }
+            
         }
         return false;
     }
