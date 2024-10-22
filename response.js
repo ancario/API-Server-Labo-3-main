@@ -54,6 +54,7 @@ export default class Response {
                     // Ajouter l'URL, le contenu et l'ETag dans la cache
                     cachedRequestsManager.add(this.HttpContext.req.url, content, ETag);
                     console.log(`[Added to cache: URL - ${url}]`);
+                    
                 }
             }
             console.log(FgCyan+Bright, "Response payload -->", content.toString().substring(0, 75) + "...");
