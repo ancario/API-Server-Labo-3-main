@@ -5,7 +5,7 @@
 // Lionel-Groulx College
 //////////////////////////////////////////////////////////////////////////////////////////////////////////////
 import { log } from "./log.js";
-
+import cachedRequestsManager from './cachedRequestsManager.js';
 export default class Response {
     constructor(HttpContext) {
         this.HttpContext = HttpContext;
@@ -40,13 +40,22 @@ export default class Response {
         this.res.writeHead(204, { 'ETag': ETag });
         this.end();
     }
-    JSON(obj, ETag = "") {                         // ok status with content
+    JSON(obj, ETag = "",fromCache = false) {                         // ok status with content
         if (ETag != "")
             this.res.writeHead(200, { 'content-type': 'application/json', 'ETag': ETag });
         else
             this.res.writeHead(200, { 'content-type': 'application/json' });
         if (obj != null) {
             let content = JSON.stringify(obj);
+            if (!fromCache) {
+                // Vérifier si la requête est de type API et que l'ID est non défini
+                let url = this.HttpContext.req.url;
+                if (this.HttpContext.isCacheable) {
+                    // Ajouter l'URL, le contenu et l'ETag dans la cache
+                    cachedRequestsManager.add(this.HttpContext.req.url, content, ETag);
+                    console.log(`[Added to cache: URL - ${url}]`);
+                }
+            }
             console.log(FgCyan+Bright, "Response payload -->", content.toString().substring(0, 75) + "...");
             return this.end(content);
         } else

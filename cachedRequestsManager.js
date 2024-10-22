@@ -1,5 +1,5 @@
-import * as utilities from "../utilities.js";
-import * as serverVariables from "../serverVariables.js";
+import * as utilities from "./utilities.js";
+import * as serverVariables from "./serverVariables.js";
 
 let repositoryCachesExpirationTime = serverVariables.get("main.repository.CacheExpirationTime");
 
@@ -7,20 +7,20 @@ let repositoryCachesExpirationTime = serverVariables.get("main.repository.CacheE
 global.repositoryCaches = [];
 global.cachedRepositoriesCleanerStarted = false;
 
-export default class CachedRequestsManager {
+export default class cachedRequestsManager {
 
     // Méthode pour démarrer le processus de nettoyage périodique des caches expirées
     static startCachedRequestsCleaner() {
-        if (!global.cachedRepositoriesCleanerStarted) {
-            global.cachedRepositoriesCleanerStarted = true;
-            setInterval(CachedRequestsManager.flushExpired, repositoryCachesExpirationTime * 1000);
+        if (!cachedRepositoriesCleanerStarted) {
+            cachedRepositoriesCleanerStarted = true;
+            setInterval(cachedRequestsManager.flushExpired, repositoryCachesExpirationTime * 1000);
             console.log("[Periodic cached requests cleaning process started...]");
         }
     }
 
     // Ajout d'une requête dans le cache (URL, contenu, et ETag optionnel)
     static add(url, content, ETag = "") {
-        CachedRequestsManager.clear(url);  // Supprime toute cache existante pour cette URL
+        cachedRequestsManager.clear(url);  // Supprime toute cache existante pour cette URL
         global.repositoryCaches.push({
             url,
             content,
@@ -63,11 +63,13 @@ export default class CachedRequestsManager {
 
     // Gère la réponse à une requête HTTP en fonction du cache
     static get(HttpContext) {
-        let cached = CachedRequestsManager.find(HttpContext.request.url);
+        let cached = cachedRequestsManager.find(HttpContext.req.url);
         if (cached) {
             HttpContext.response.JSON(cached.content, cached.ETag, true); // true signifie "from cache"
-            console.log(`[Response sent from cache: URL - ${HttpContext.request.url}]`);
+
+            console.log(`[Response sent from cache: URL - ${HttpContext.req.url}]`);
+            return true;
         }
-        return cached;
+        return false;
     }
 }
