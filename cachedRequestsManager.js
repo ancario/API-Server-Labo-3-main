@@ -66,7 +66,7 @@ export default class cachedRequestsManager {
         let cached = cachedRequestsManager.find(HttpContext.req.url);
         
         if (cached) {
-            if(cached.ETag == HttpContext.req.headers["etag"]){
+          // if(cached.ETag == HttpContext.req.headers["etag"]){
            HttpContext.response.JSON(cached.content, cached.ETag, true); // true signifie "from cache"
 
             console.log(`[Response sent from cache: URL - ${HttpContext.req.url}]`);
@@ -74,7 +74,7 @@ export default class cachedRequestsManager {
             return true;
             }
             
-        }
+      //  }
         return false;
     }
 }
