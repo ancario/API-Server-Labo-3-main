@@ -1,7 +1,7 @@
 import * as utilities from "./utilities.js";
 import * as serverVariables from "./serverVariables.js";
 
-let repositoryCachesExpirationTime = serverVariables.get("main.repository.CacheExpirationTime");
+let repositoryCachesExpirationTime = serverVariables.get("main.requestCache.expirationTime");
 
 // Initialisation des variables globales pour stocker les caches et gérer le nettoyage
 global.repositoryCaches = [];
